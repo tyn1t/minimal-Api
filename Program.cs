@@ -174,8 +174,8 @@ app.MapPost("/administradores", ([FromBody]  AdministradorDTO administradorDTO, 
         });
     
 }).RequireAuthorization()
-.RequireAuthorization(new AuthorizeAttribute {Roles = "Adm"}).
-WithTags("Adminstradores");
+.RequireAuthorization(new AuthorizeAttribute {Roles = "Adm"})
+.WithTags("Adminstradores");
 #endregion
 
 #region Veculos
@@ -215,14 +215,18 @@ app.MapPost("/veiculos", ([FromBody] VeiculoDTO veiculoDTO, IVeiculoSevirco veic
 app.MapGet("/veiculos", ([FromQuery] int? pagina, IVeiculoSevirco veiculoSevirco) => {
     var veiculos = veiculoSevirco.Todos(pagina);
     return Results.Ok(veiculos);
-}).RequireAuthorization().WithTags("Veiculo");
+}).RequireAuthorization()
+.RequireAuthorization(new AuthorizeAttribute { Roles = "Adm,Editor" })
+.WithTags("Veiculo");
 
 
 app.MapGet("/veiculos/{id}", ([FromRoute] int id, IVeiculoSevirco veiculoSevirco) => {
     var veiculo = veiculoSevirco.BuscaPorId(id);
     if(veiculo == null) return Results.NotFound();
     return Results.Ok(veiculo);
-}).RequireAuthorization().WithTags("Veiculo");
+}).RequireAuthorization()
+.RequireAuthorization(new AuthorizeAttribute { Roles = "Adm,Editor" })
+.WithTags("Veiculo");
 
 
 app.MapPut("/veiculos/{id}", ([FromRoute] int id, VeiculoDTO veiculoDTO, IVeiculoSevirco veiculoServico) => {
